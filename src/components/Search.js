@@ -8,7 +8,6 @@ import {
   FlatList
 } from "react-native";
 
-import films from "../data/filmsData";
 import FilmItem from "./FilmItem";
 
 import { getFilms } from "../api/TMDBA";
@@ -16,19 +15,28 @@ import { getFilms } from "../api/TMDBA";
 class Search extends Component {
   constructor(props) {
     super(props);
-    this._films = [];
+    this.searchedText = "";
+    this.state = {
+      films: []
+    };
+  }
+
+  onChangedText(text) {
+    this.searchedText = text;
   }
 
   renderFilms() {
-    getFilms("stars").then(data => {
-      this._films = data.results;
-      this.forceUpdate();
-    });
+    if (this.searchedText.length > 0) {
+      getFilms(this.searchedText).then(data => {
+        this.setState({ films: data.results });
+      });
+    }
   }
   render() {
     return (
       <View style={sytles.mainContainer}>
         <TextInput
+          onChangeText={text => this.onChangedText(text)}
           style={[sytles.textinput, { marginBottom: 10 }]}
           placeholder="Entrer un film"
         />
@@ -38,7 +46,7 @@ class Search extends Component {
           onPress={() => this.renderFilms()}
         />
         <FlatList
-          data={this._films}
+          data={this.state.films}
           keyExtractor={item => item.title.toString()}
           renderItem={({ item }) => <FilmItem film={item} />}
         />
