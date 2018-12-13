@@ -2,6 +2,7 @@
 
 import React from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
+import { getImageFromApi } from "../api/TMDBA";
 
 class FilmItem extends React.Component {
   render() {
@@ -11,12 +12,16 @@ class FilmItem extends React.Component {
       overview,
       title,
       vote_average,
-      release_date
+      release_date,
+      poster_path
     } = this.props.film;
 
     return (
       <View style={styles.main_container}>
-        <Image style={styles.image} source={{ uri: "image" }} />
+        <Image
+          style={styles.image}
+          source={{ uri: getImageFromApi(poster_path) }}
+        />
         <View style={styles.content_container}>
           <View style={styles.header_container}>
             <Text style={styles.title_text}>{title}</Text>
