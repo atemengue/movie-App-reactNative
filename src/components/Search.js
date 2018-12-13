@@ -17,6 +17,8 @@ class Search extends Component {
   constructor(props) {
     super(props);
     this.searchedText = "";
+    this.page = 0; // compteur pour connaitre la page courante
+    this.totalPages = 0; // nombre de pages totales pour savoir
     this.state = {
       films: [],
       isloading: false
@@ -30,9 +32,11 @@ class Search extends Component {
   renderFilms() {
     if (this.searchedText.length > 0) {
       this.setState({ isloading: true }); // lancement du chargement
-      getFilms(this.searchedText).then(data => {
+      getFilms(this.searchedText, this.page + 1).then(data => {
+        this.data = data.page;
+        this.totalPages = data.total_pages;
         this.setState({
-          films: data.results,
+          films: [...this.state.films, ...data.results],
           isloading: false // Arret du chargement
         });
       });
@@ -66,6 +70,13 @@ class Search extends Component {
         />
         <FlatList
           data={this.state.films}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            console.log("onEndReached");
+            if (this.state.films.length > 0 && this.page < this.totalPages) {
+              this.renderFilms();
+            }
+          }}
           keyExtractor={item => item.title.toString()}
           renderItem={({ item }) => <FilmItem film={item} />}
         />
