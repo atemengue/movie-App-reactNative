@@ -73,12 +73,14 @@ class Search extends Component {
     }
   }
 
-  displayDetailFilm = idFim => {
-    console.log("Display film width id" + idFim);
+  displayDetailFilm = idFilm => {
+    console.log("Display film width id" + idFilm);
+    this.props.navigation.navigate("FilmDetail", { idFilm: idFilm });
   };
 
   render() {
     console.log(this.state.isloading);
+    console.log(this.props);
     return (
       <View style={sytles.mainContainer}>
         <TextInput
