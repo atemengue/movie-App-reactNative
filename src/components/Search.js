@@ -25,6 +25,26 @@ class Search extends Component {
     };
   }
 
+  searchFilms() {
+    this.page = 0;
+    this.totalPages = 0;
+    this.setState(
+      {
+        films: []
+      },
+      () => {
+        console.log(
+          "Page : " +
+            this.page +
+            " / TotalPages : " +
+            this.totalPages +
+            " / Nombre de films : " +
+            this.state.films.length
+        );
+        this.renderFilms();
+      }
+    );
+  }
   onChangedText(text) {
     this.searchedText = text;
   }
@@ -33,7 +53,7 @@ class Search extends Component {
     if (this.searchedText.length > 0) {
       this.setState({ isloading: true }); // lancement du chargement
       getFilms(this.searchedText, this.page + 1).then(data => {
-        this.data = data.page;
+        this.page = data.page;
         this.totalPages = data.total_pages;
         this.setState({
           films: [...this.state.films, ...data.results],
@@ -53,6 +73,10 @@ class Search extends Component {
     }
   }
 
+  displayDetailFilm = idFim => {
+    console.log("Display film width id" + idFim);
+  };
+
   render() {
     console.log(this.state.isloading);
     return (
@@ -61,12 +85,12 @@ class Search extends Component {
           onChangeText={text => this.onChangedText(text)}
           style={[sytles.textinput, { marginBottom: 10 }]}
           placeholder="Entrer un film"
-          onSubmitEditing={() => this.renderFilms()}
+          onSubmitEditing={() => this.searchFilms()}
         />
         <Button
           style={{ height: 50 }}
-          title="Rechercer"
-          onPress={() => this.renderFilms()}
+          title="Rechercher"
+          onPress={() => this.searchFilms()}
         />
         <FlatList
           data={this.state.films}
@@ -77,8 +101,13 @@ class Search extends Component {
               this.renderFilms();
             }
           }}
-          keyExtractor={item => item.title.toString()}
-          renderItem={({ item }) => <FilmItem film={item} />}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => (
+            <FilmItem
+              film={item}
+              displayDetailForFilm={this.displayDetailFilm}
+            />
+          )}
         />
         {this.displayLoading()}
       </View>
@@ -88,7 +117,7 @@ class Search extends Component {
 
 const sytles = StyleSheet.create({
   mainContainer: {
-    marginTop: 40
+    flex: 1
   },
   textinput: {
     marginLeft: 5,
