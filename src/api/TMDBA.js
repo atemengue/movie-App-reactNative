@@ -44,3 +44,15 @@ export async function getFilms(text, page) {
 export function getImageFromApi(name) {
   return "https://image.tmdb.org/t/p/w300" + name;
 }
+
+export async function getFilmDetail(id) {
+  const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=fr`;
+  // const url = `https://api.themoviedb.org/3/search/movie/${id}?api_key=${API_KEY}&language=fr`;
+
+  try {
+    const response = await fetch(url);
+    return response.json();
+  } catch (error) {
+    return console.log(error);
+  }
+}
